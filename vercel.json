@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index" },
+    { "source": "/health", "destination": "/api/index" },
+    { "source": "/sitemap.xml", "destination": "/api/index" },
+    { "source": "/Style/(.*)", "destination": "/client/Style/$1" },
+    { "source": "/script/(.*)", "destination": "/client/script/$1" },
+    { "source": "/assets/(.*)", "destination": "/client/assets/$1" },
+    { "source": "/manifest.json", "destination": "/client/manifest.json" },
+    { "source": "/sw.js", "destination": "/client/sw.js" },
+    { "source": "/", "destination": "/client/Pages/index.html" },
+    { "source": "/details", "destination": "/client/Pages/details.html" },
+    { "source": "/movie/:slug", "destination": "/client/Pages/details.html" },
+    { "source": "/tv/:slug", "destination": "/client/Pages/details.html" }
+  ]
+}
