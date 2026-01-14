@@ -1,0 +1,28 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run server",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": {
+        "cwd": "${workspaceFolder}/server"
+      },
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "type": "Live Preview",
+      "workspacePath": "c:\\Users\\MSI\\Desktop\\project_html",
+      "problemMatcher": [],
+      "label": "Live Preview: Run Server"
+    },
+    {
+      "type": "npm",
+      "script": "dev",
+      "problemMatcher": [],
+      "label": "npm: dev",
+      "detail": "nodemon server.js"
+    }
+  ]
+}

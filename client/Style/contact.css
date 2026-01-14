@@ -1,0 +1,240 @@
+/* Contact Page Styles */
+.contact-section {
+    padding: 100px 50px 50px;
+    min-height: 100vh;
+}
+
+.contact-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.contact-title {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: var(--netflix-white);
+    text-align: center;
+}
+
+.contact-subtitle {
+    font-size: 1.2rem;
+    color: var(--netflix-light-gray);
+    text-align: center;
+    margin-bottom: 50px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    margin-top: 40px;
+}
+
+.contact-form-container,
+.contact-info-container {
+    background-color: var(--netflix-gray);
+    border-radius: 10px;
+    padding: 40px;
+}
+
+.contact-form-container h2,
+.contact-info-container h2 {
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+    color: var(--netflix-white);
+}
+
+/* Form Styles */
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    color: var(--netflix-white);
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 12px 15px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--netflix-light-gray);
+    border-radius: 4px;
+    color: var(--netflix-white);
+    font-size: 1rem;
+    transition: border-color var(--transition-speed);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--netflix-red);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 150px;
+}
+
+/* Contact Info Styles */
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.info-item i {
+    font-size: 1.5rem;
+    color: var(--netflix-red);
+    margin-top: 5px;
+}
+
+.info-item h3 {
+    color: var(--netflix-white);
+    margin-bottom: 5px;
+    font-size: 1.2rem;
+}
+
+.info-item p {
+    color: var(--netflix-light-gray);
+    margin-bottom: 3px;
+    font-size: 0.95rem;
+}
+
+/* FAQ Styles */
+.faq-section h3 {
+    color: var(--netflix-white);
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+}
+
+.faq-item {
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--netflix-light-gray);
+}
+
+.faq-question {
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--netflix-white);
+    text-align: left;
+    padding: 15px 0;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: color var(--transition-speed);
+}
+
+.faq-question:hover {
+    color: var(--netflix-red);
+}
+
+.faq-question i {
+    transition: transform var(--transition-speed);
+}
+
+.faq-question.active i {
+    transform: rotate(180deg);
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--transition-speed) ease-out;
+}
+
+.faq-answer.active {
+    max-height: 200px;
+}
+
+.faq-answer p {
+    color: var(--netflix-light-gray);
+    padding: 0 0 15px;
+    line-height: 1.6;
+}
+
+/* Success Message */
+.success-message {
+    background-color: #4CAF50;
+    color: white;
+    padding: 20px;
+    border-radius: 4px;
+    margin-top: 20px;
+    display: none;
+}
+
+.success-message.active {
+    display: block;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .contact-grid {
+        gap: 30px;
+    }
+    
+    .contact-form-container,
+    .contact-info-container {
+        padding: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .contact-section {
+        padding: 100px 20px 30px;
+    }
+    
+    .contact-title {
+        font-size: 2.5rem;
+    }
+    
+    .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .contact-subtitle {
+        font-size: 1.1rem;
+        padding: 0 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .contact-title {
+        font-size: 2rem;
+    }
+    
+    .contact-form-container,
+    .contact-info-container {
+        padding: 25px 20px;
+    }
+    
+    .info-item {
+        flex-direction: column;
+        gap: 10px;
+    }
+}

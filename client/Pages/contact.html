@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - StreamFinder</title>
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../style/shared.css">
+    <link rel="stylesheet" href="../style/contact.css">
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0b0f14">
+    <link rel="stylesheet" href="/Style/index.css">
+</head>
+<body>
+    <!-- Header - NEW DESIGN -->
+    <header id="header" role="banner">
+        <div class="header-container">
+            <!-- Left: Logo -->
+            <a href="index.html" class="logo" aria-label="StreamFinder Home">
+                <div class="logo-container">
+                    <i class="fas fa-play-circle logo-icon" aria-hidden="true"></i>
+                    <span class="logo-text">
+                        STREAM<span class="logo-highlight">FINDER</span>
+                    </span>
+                </div>
+            </a>
+
+            <!-- Center: Navigation -->
+            <nav class="main-nav" aria-label="Main Navigation">
+                <div class="nav-container">
+                    <a href="index.html" class="nav-item active" aria-current="page">
+                        <div class="nav-icon">
+                            <i class="fas fa-home" aria-hidden="true"></i>
+                        </div>
+                        <span class="nav-label">Home</span>
+                        <div class="nav-indicator" aria-hidden="true"></div>
+                    </a>
+                    
+                    <a href="movies.html" class="nav-item">
+                        <div class="nav-icon">
+                            <i class="fas fa-film" aria-hidden="true"></i>
+                        </div>
+                        <span class="nav-label">Movies</span>
+                        <div class="nav-indicator" aria-hidden="true"></div>
+                    </a>
+                    
+                    <a href="series.html" class="nav-item">
+                        <div class="nav-icon">
+                            <i class="fas fa-tv" aria-hidden="true"></i>
+                        </div>
+                        <span class="nav-label">TV Shows</span>
+                        <div class="nav-indicator" aria-hidden="true"></div>
+                    </a>
+                    
+                    <a href="#categories" class="nav-item">
+                        <div class="nav-icon">
+                            <i class="fas fa-layer-group" aria-hidden="true"></i>
+                        </div>
+                        <span class="nav-label">Genres</span>
+                        <div class="nav-indicator" aria-hidden="true"></div>
+                    </a>
+                    
+                    <a href="#trending" class="nav-item">
+                        <div class="nav-icon">
+                            <i class="fas fa-fire" aria-hidden="true"></i>
+                        </div>
+                        <span class="nav-label">Trending</span>
+                        <div class="nav-indicator" aria-hidden="true"></div>
+                    </a>
+                </div>
+            </nav>
+
+            <!-- Right: User Actions -->
+            <div class="header-actions">
+                <!-- Search Bar -->
+                <div class="search-wrapper">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon" aria-hidden="true"></i>
+                        <input type="text" 
+                               id="searchInput" 
+                               class="search-input" 
+                               placeholder="Search movies, shows..."
+                               aria-label="Search movies and TV shows">
+                        <div class="search-suggestions" id="searchSuggestions" role="listbox"></div>
+                    </div>
+                    <button class="voice-search-btn" id="voiceSearchBtn" aria-label="Voice search">
+                        <i class="fas fa-microphone" aria-hidden="true"></i>
+                    </button>
+                </div>
+
+                <!-- Notification -->
+                <div class="notification-wrapper" role="button" aria-label="Notifications" tabindex="0">
+                    <i class="fas fa-bell notification-icon" aria-hidden="true"></i>
+                    <span class="notification-badge">3</span>
+                    <div class="notification-dropdown" role="menu">
+                        <div class="dropdown-header">
+                            <h4>Notifications</h4>
+                            <button class="mark-read-btn">Mark all read</button>
+                        </div>
+                        <div class="notification-list">
+                            <div class="notification-item unread">
+                                <i class="fas fa-play-circle" aria-hidden="true"></i>
+                                <div class="notification-content">
+                                    <p>New episode of "Stranger Things" available</p>
+                                    <span>2 hours ago</span>
+                                </div>
+                            </div>
+                            <div class="notification-item unread">
+                                <i class="fas fa-film" aria-hidden="true"></i>
+                                <div class="notification-content">
+                                    <p>"Dune 2" now streaming on HBO Max</p>
+                                    <span>5 hours ago</span>
+                                </div>
+                            </div>
+                            <div class="notification-item">
+                                <i class="fas fa-calendar" aria-hidden="true"></i>
+                                <div class="notification-content">
+                                    <p>"The Batman" releasing next week</p>
+                                    <span>1 day ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theme Toggle -->
+                <div class="theme-toggle-wrapper">
+                    <input type="checkbox" id="themeToggle" class="theme-checkbox">
+                    <label for="themeToggle" class="theme-switch" aria-label="Toggle dark/light mode">
+                        <i class="fas fa-sun" aria-hidden="true"></i>
+                        <i class="fas fa-moon" aria-hidden="true"></i>
+                        <span class="theme-slider"></span>
+                    </label>
+                </div>
+
+                <!-- User Profile -->
+                <div class="profile-wrapper">
+                    <button class="profile-btn" id="profileBtn" aria-label="User profile menu">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=StreamFinder&background=1a1a1a&color=E50914" 
+                             alt="User Avatar"
+                             loading="lazy"
+                             width="40" 
+                             height="40">
+                    </button>
+                    <div class="profile-dropdown" role="menu">
+                        <div class="dropdown-section">
+                            <div class="user-info">
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=StreamFinder&background=1a1a1a&color=E50914" 
+                                     alt="User Avatar" 
+                                     loading="lazy"
+                                     width="40" 
+                                     height="40">
+                                <div>
+                                    <h5>John Doe</h5>
+                                    <span>Pro Member</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-user" aria-hidden="true"></i>
+                            <span>My Profile</span>
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-heart" aria-hidden="true"></i>
+                            <span>Watchlist</span>
+                            <span class="badge">12</span>
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-history" aria-hidden="true"></i>
+                            <span>History</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-cog" aria-hidden="true"></i>
+                            <span>Settings</span>
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Toggle -->
+                <button class="mobile-toggle" id="mobileToggle" aria-label="Mobile menu" aria-expanded="false">
+                    <i class="fas fa-bars" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu" role="dialog" aria-label="Mobile navigation menu">
+        <div class="mobile-menu-header">
+            <div class="mobile-logo">
+                <i class="fas fa-play-circle" aria-hidden="true"></i>
+                <span>STREAMFINDER</span>
+            </div>
+            <button class="mobile-close" id="mobileClose" aria-label="Close mobile menu">
+                <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+        </div>
+        
+        <nav class="mobile-nav" aria-label="Mobile Navigation">
+            <a href="index.html" class="mobile-nav-item active" aria-current="page">
+                <i class="fas fa-home" aria-hidden="true"></i>
+                <span>Home</span>
+            </a>
+            <a href="movies.html" class="mobile-nav-item">
+                <i class="fas fa-film" aria-hidden="true"></i>
+                <span>Movies</span>
+            </a>
+            <a href="series.html" class="mobile-nav-item">
+                <i class="fas fa-tv" aria-hidden="true"></i>
+                <span>TV Shows</span>
+            </a>
+            <a href="#categories" class="mobile-nav-item">
+                <i class="fas fa-layer-group" aria-hidden="true"></i>
+                <span>Genres</span>
+            </a>
+            <a href="#trending" class="mobile-nav-item">
+                <i class="fas fa-fire" aria-hidden="true"></i>
+                <span>Trending</span>
+            </a>
+        </nav>
+        
+        <div class="mobile-divider"></div>
+        
+        <div class="mobile-actions">
+            <a href="#" class="mobile-action-item">
+                <i class="fas fa-user" aria-hidden="true"></i>
+                <span>Profile</span>
+            </a>
+            <a href="#" class="mobile-action-item">
+                <i class="fas fa-heart" aria-hidden="true"></i>
+                <span>Watchlist</span>
+            </a>
+            <a href="#" class="mobile-action-item">
+                <i class="fas fa-cog" aria-hidden="true"></i>
+                <span>Settings</span>
+            </a>
+            <div class="theme-toggle-mobile">
+                <span>Dark Mode</span>
+                <label class="theme-switch-mobile">
+                    <input type="checkbox" id="themeToggleMobile">
+                    <span class="theme-slider-mobile"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay" role="presentation"></div>
+
+    <section class="contact-section">
+        <div class="contact-container">
+            <h1 class="contact-title">Contact Us</h1>
+            <p class="contact-subtitle">Have questions or suggestions? We'd love to hear from you!</p>
+            
+            <div class="contact-grid">
+                <!-- Contact Form -->
+                <div class="contact-form-container">
+                    <h2>Send us a Message</h2>
+                    <form id="contactForm" class="contact-form">
+                        <div class="form-group">
+                            <label for="name">Your Name *</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Your Email *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="subject">Subject *</label>
+                            <select id="subject" name="subject" required>
+                                <option value="">Select a subject</option>
+                                <option value="general">General Inquiry</option>
+                                <option value="suggestion">Content Suggestion</option>
+                                <option value="bug">Report a Bug</option>
+                                <option value="partnership">Partnership Opportunity</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Your Message *</label>
+                            <textarea id="message" name="message" rows="6" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="primary-button">Send Message</button>
+                    </form>
+                </div>
+                
+                <!-- Contact Info -->
+                <div class="contact-info-container">
+                    <h2>Contact Information</h2>
+                    
+                    <div class="contact-info">
+                        <div class="info-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <h3>Email</h3>
+                                <p>support@streamfinder.com</p>
+                                <p>partnerships@streamfinder.com</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <h3>Phone</h3>
+                                <p>+1 (555) 123-4567</p>
+                                <p>Mon-Fri, 9AM-6PM EST</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <h3>Address</h3>
+                                <p>123 Streaming Street</p>
+                                <p>Los Angeles, CA 90001</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-section">
+                        <h3>Frequently Asked Questions</h3>
+                        <div class="faq-item">
+                            <button class="faq-question">
+                                How do I report incorrect streaming information?
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="faq-answer">
+                                <p>Use the "Report a Bug" option in the contact form. Please include the title, incorrect platform information, and the correct information if known.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <button class="faq-question">
+                                Can I suggest a movie or show to be added?
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="faq-answer">
+                                <p>Yes! Use the "Content Suggestion" option in the contact form. Our team reviews all suggestions weekly.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="movies.html">Movies</a>
+            <a href="series.html">TV Shows</a>
+            <a href="contact.html">Contact Us</a>
+            <a href="#">FAQ</a>
+            <a href="#">Help Center</a>
+            <a href="#">Terms of Use</a>
+            <a href="#">Privacy</a>
+        </div>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+        <p class="copyright">© 2023 StreamFinder. All rights reserved.</p>
+    </footer>
+
+    <script src="/script/main.js"></script>
+    <script type="module">
+    import { initializeContactPage, setupContactForm, setupFAQ } from '/script/pages/contact.js';
+    // Functions will auto-run due to the initialization code in the module
+</script>
+<script src="/script/pages/contact.js" defer></script>
+<!-- Add page-specific script based on current page -->
+    <script type="module" src="/script/api/tmdb-global.js" defer></script>
+    <script src="/script/pwa.js" defer></script>
+    <script src="/script/ui/header.js" defer></script>
+    <script src="/script/ui/header-page.js" defer></script>
+</body>
+</html>

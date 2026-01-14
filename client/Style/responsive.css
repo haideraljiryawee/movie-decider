@@ -1,0 +1,89 @@
+/* Responsive Design - Additional Styles */
+
+/* Large screens (1200px and up) */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
+        margin: 0 auto;
+    }
+}
+
+/* Medium screens (768px to 1199px) */
+@media (max-width: 1199px) and (min-width: 768px) {
+    .hero h1 {
+        font-size: 3.5rem;
+    }
+    
+    .movie-card, .series-card {
+        min-width: 220px;
+    }
+    
+    .categories {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Small screens (576px to 767px) */
+@media (max-width: 767px) and (min-width: 576px) {
+    .hero h1 {
+        font-size: 2.8rem;
+    }
+    
+    .movie-card, .series-card {
+        min-width: 180px;
+    }
+    
+    .filter-controls {
+        flex-wrap: wrap;
+    }
+    
+    .filter-select {
+        flex: 1;
+        min-width: 150px;
+    }
+}
+
+/* Extra small screens (575px and down) */
+@media (max-width: 575px) {
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+    }
+    
+    .movie-card, .series-card {
+        min-width: 160px;
+        height: 240px;
+    }
+    
+    .categories {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .footer-links {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .featured-title {
+        font-size: 1.8rem;
+    }
+}
+
+/* Print styles */
+@media print {
+    header, footer, .user-actions, .mobile-menu-btn {
+        display: none !important;
+    }
+    
+    body {
+        background-color: white;
+        color: black;
+    }
+    
+    .content-section {
+        page-break-inside: avoid;
+    }
+}

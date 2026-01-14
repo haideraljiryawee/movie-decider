@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>StreamFinder | Sign In</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/Style/shared.css">
+  <link rel="stylesheet" href="/Style/auth.css">
+</head>
+<body class="auth-body">
+  <div class="auth-noise" aria-hidden="true"></div>
+
+  <header class="auth-top">
+    <a href="index.html" class="auth-logo">
+      <i class="fas fa-play-circle" aria-hidden="true"></i>
+      <span>STREAM<span>FINDER</span></span>
+    </a>
+    <a href="index.html" class="auth-back">Back to home</a>
+  </header>
+
+  <main class="auth-shell">
+    <section class="auth-panel">
+      <div class="auth-panel-inner">
+        <div class="auth-kicker">Welcome back</div>
+        <h1>Find your next obsession.</h1>
+        <p>Create your account to unlock watchlists, quick links, and smart picks.</p>
+
+        <div class="auth-features">
+          <div class="auth-feature"><i class="fas fa-bolt"></i><span>Instant recommendations</span></div>
+          <div class="auth-feature"><i class="fas fa-heart"></i><span>Personal watchlist</span></div>
+          <div class="auth-feature"><i class="fas fa-bell"></i><span>Release alerts</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="auth-card">
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab is-active" data-mode="login">Sign in</button>
+        <button type="button" class="auth-tab" data-mode="register">Create account</button>
+      </div>
+
+      <form id="authForm" class="auth-form">
+        <div class="auth-title" id="authTitle">Sign in to StreamFinder</div>
+        <div class="auth-subtitle" id="authSubtitle">Use your username and password.</div>
+
+        <label class="auth-field">
+          <span>Username</span>
+          <input type="text" id="username" autocomplete="username" required>
+        </label>
+
+        <label class="auth-field">
+          <span>Password</span>
+          <input type="password" id="password" autocomplete="current-password" required>
+        </label>
+
+        <div class="auth-hint" id="passwordHint">Password must be at least 8 characters and include an uppercase letter, a lowercase letter, and a number.</div>
+
+        <label class="auth-field" id="confirmField" hidden>
+          <span>Confirm password</span>
+          <input type="password" id="confirmPassword" autocomplete="new-password">
+        </label>
+
+        <button type="submit" class="auth-submit" id="authSubmit">
+          <span>Sign in</span>
+          <i class="fas fa-arrow-right" aria-hidden="true"></i>
+        </button>
+
+        <div class="auth-msg" id="authMsg" role="status" aria-live="polite"></div>
+
+        <div class="auth-switch" id="authSwitch">
+          New here? <button type="button" data-switch="register">Create an account</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="/script/pages/auth.js" defer></script>
+</body>
+</html>

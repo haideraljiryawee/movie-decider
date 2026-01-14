@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamFinder - Your Ultimate Streaming Guide</title>
+    
+  <!-- Preload (optional) local critical CSS -->
+<link rel="preload" href="/Style/shared.css" as="style">
+<link rel="preload" href="/Style/index.css" as="style">
+
+<!-- Stylesheets -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<link rel="stylesheet" href="/Style/shared.css">
+<link rel="stylesheet" href="/Style/index.css">
+
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0b0f14">
+
+</head>
+<body>
+    <!-- Background -->
+    <!-- Header - NEW DESIGN -->
+    <header id="header" role="banner">
+        <div class="header-container">
+            <!-- Left: Logo -->
+            <a href="index.html" class="logo" aria-label="StreamFinder Home">
+                <div class="logo-container">
+                    <i class="fas fa-play-circle logo-icon" aria-hidden="true"></i>
+                    <span class="logo-text">
+                        STREAM<span class="logo-highlight">FINDER</span>
+                    </span>
+                </div>
+            </a>
+
+            <!-- Center: Navigation -->
+            <nav class="main-nav" aria-label="Main Navigation">
+                <div class="nav-container">
+                    <a href="index.html" class="nav-item active" aria-current="page">
+                        <div class="nav-icon">
+                            <i class="fas fa-home" aria-hidden="true"></i>
+                        </div>
+                        <span class="nav-label">Home</span>
+                        <div class="nav-indicator" aria-hidden="true"></div>
+                    </a>
+                    
+                    <a href="movies.html" class="nav-item">
+                        <div class="nav-icon">
+                            <i class="fas fa-film" aria-hidden="true"></i>
+                        </div>
+                        <span class="nav-label">Movies</span>
+                        <div class="nav-indicator" aria-hidden="true"></div>
+                    </a>
+                    
+                    <a href="series.html" class="nav-item">
+                        <div class="nav-icon">
+                            <i class="fas fa-tv" aria-hidden="true"></i>
+                        </div>
+                        <span class="nav-label">TV Shows</span>
+                        <div class="nav-indicator" aria-hidden="true"></div>
+                    </a>
+                    
+                    <a href="#categories" class="nav-item">
+                        <div class="nav-icon">
+                            <i class="fas fa-layer-group" aria-hidden="true"></i>
+                        </div>
+                        <span class="nav-label">Genres</span>
+                        <div class="nav-indicator" aria-hidden="true"></div>
+                    </a>
+                    
+                    <a href="#trending" class="nav-item">
+                        <div class="nav-icon">
+                            <i class="fas fa-fire" aria-hidden="true"></i>
+                        </div>
+                        <span class="nav-label">Trending</span>
+                        <div class="nav-indicator" aria-hidden="true"></div>
+                    </a>
+                </div>
+            </nav>
+
+            <!-- Right: User Actions -->
+            <div class="header-actions">
+                <!-- Search Bar -->
+                <div class="search-wrapper">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon" aria-hidden="true"></i>
+                        <input type="text" 
+                               id="searchInput" 
+                               class="search-input" 
+                               placeholder="Search movies, shows..."
+                               aria-label="Search movies and TV shows">
+                        <div class="search-suggestions" id="searchSuggestions" role="listbox"></div>
+                    </div>
+                    <button class="voice-search-btn" id="voiceSearchBtn" aria-label="Voice search">
+                        <i class="fas fa-microphone" aria-hidden="true"></i>
+                    </button>
+                </div>
+
+                <!-- Notification -->
+                <div class="notification-wrapper" role="button" aria-label="Notifications" tabindex="0">
+                    <i class="fas fa-bell notification-icon" aria-hidden="true"></i>
+                    <span class="notification-badge">3</span>
+                    <div class="notification-dropdown" role="menu">
+                        <div class="dropdown-header">
+                            <h4>Notifications</h4>
+                            <button class="mark-read-btn">Mark all read</button>
+                        </div>
+                        <div class="notification-list">
+                            <div class="notification-item unread">
+                                <i class="fas fa-play-circle" aria-hidden="true"></i>
+                                <div class="notification-content">
+                                    <p>New episode of "Stranger Things" available</p>
+                                    <span>2 hours ago</span>
+                                </div>
+                            </div>
+                            <div class="notification-item unread">
+                                <i class="fas fa-film" aria-hidden="true"></i>
+                                <div class="notification-content">
+                                    <p>"Dune 2" now streaming on HBO Max</p>
+                                    <span>5 hours ago</span>
+                                </div>
+                            </div>
+                            <div class="notification-item">
+                                <i class="fas fa-calendar" aria-hidden="true"></i>
+                                <div class="notification-content">
+                                    <p>"The Batman" releasing next week</p>
+                                    <span>1 day ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theme Toggle -->
+                <div class="theme-toggle-wrapper">
+                    <input type="checkbox" id="themeToggle" class="theme-checkbox">
+                    <label for="themeToggle" class="theme-switch" aria-label="Toggle dark/light mode">
+                        <i class="fas fa-sun" aria-hidden="true"></i>
+                        <i class="fas fa-moon" aria-hidden="true"></i>
+                        <span class="theme-slider"></span>
+                    </label>
+                </div>
+
+                <!-- User Profile -->
+                <div class="profile-wrapper">
+                    <button class="profile-btn" id="profileBtn" aria-label="User profile menu">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=StreamFinder&background=1a1a1a&color=E50914" 
+                             alt="User Avatar"
+                             loading="lazy"
+                             width="40" 
+                             height="40">
+                    </button>
+                    <div class="profile-dropdown" role="menu">
+                        <div class="dropdown-section">
+                            <div class="user-info">
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=StreamFinder&background=1a1a1a&color=E50914" 
+                                     alt="User Avatar" 
+                                     loading="lazy"
+                                     width="40" 
+                                     height="40">
+                                <div>
+                                    <h5>John Doe</h5>
+                                    <span>Pro Member</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-user" aria-hidden="true"></i>
+                            <span>My Profile</span>
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-heart" aria-hidden="true"></i>
+                            <span>Watchlist</span>
+                            <span class="badge">12</span>
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-history" aria-hidden="true"></i>
+                            <span>History</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-cog" aria-hidden="true"></i>
+                            <span>Settings</span>
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Toggle -->
+                <button class="mobile-toggle" id="mobileToggle" aria-label="Mobile menu" aria-expanded="false">
+                    <i class="fas fa-bars" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu" role="dialog" aria-label="Mobile navigation menu">
+        <div class="mobile-menu-header">
+            <div class="mobile-logo">
+                <i class="fas fa-play-circle" aria-hidden="true"></i>
+                <span>STREAMFINDER</span>
+            </div>
+            <button class="mobile-close" id="mobileClose" aria-label="Close mobile menu">
+                <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+        </div>
+        
+        <nav class="mobile-nav" aria-label="Mobile Navigation">
+            <a href="index.html" class="mobile-nav-item active" aria-current="page">
+                <i class="fas fa-home" aria-hidden="true"></i>
+                <span>Home</span>
+            </a>
+            <a href="movies.html" class="mobile-nav-item">
+                <i class="fas fa-film" aria-hidden="true"></i>
+                <span>Movies</span>
+            </a>
+            <a href="series.html" class="mobile-nav-item">
+                <i class="fas fa-tv" aria-hidden="true"></i>
+                <span>TV Shows</span>
+            </a>
+            <a href="#categories" class="mobile-nav-item">
+                <i class="fas fa-layer-group" aria-hidden="true"></i>
+                <span>Genres</span>
+            </a>
+            <a href="#trending" class="mobile-nav-item">
+                <i class="fas fa-fire" aria-hidden="true"></i>
+                <span>Trending</span>
+            </a>
+        </nav>
+        
+        <div class="mobile-divider"></div>
+        
+        <div class="mobile-actions">
+            <a href="#" class="mobile-action-item">
+                <i class="fas fa-user" aria-hidden="true"></i>
+                <span>Profile</span>
+            </a>
+            <a href="#" class="mobile-action-item">
+                <i class="fas fa-heart" aria-hidden="true"></i>
+                <span>Watchlist</span>
+            </a>
+            <a href="#" class="mobile-action-item">
+                <i class="fas fa-cog" aria-hidden="true"></i>
+                <span>Settings</span>
+            </a>
+            <div class="theme-toggle-mobile">
+                <span>Dark Mode</span>
+                <label class="theme-switch-mobile">
+                    <input type="checkbox" id="themeToggleMobile">
+                    <span class="theme-slider-mobile"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay" role="presentation"></div>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- [Rest of your existing content remains exactly the same] -->
+        <!-- Hero Slider -->
+        <section class="hero-slider" id="heroSlider">
+            <div class="hero-funnel">
+                <h1 class="hero-title">
+                    Don't know what to watch?
+                    <span>We decide in 30 seconds.</span>
+                </h1>
+                <button id="decideBtn" class="hero-decide-btn" type="button">
+                    🎯 Decide What I Should Watch
+                </button>
+            </div>
+            <div class="swiper-wrapper" id="sliderContent">
+                <!-- Slides will be added here dynamically -->
+            </div>
+            
+            <!-- Slider Navigation -->
+            <div class="slider-nav">
+                <button class="slider-nav-btn prev-slide" aria-label="Previous slide">
+                    <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                </button>
+                <div class="slider-pagination" aria-label="Slider pagination"></div>
+                <button class="slider-nav-btn next-slide" aria-label="Next slide">
+                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                </button>
+            </div>
+            
+            <!-- Slider Progress Bar -->
+            <div class="slider-progress">
+                <div class="progress-bar"></div>
+            </div>
+        </section>
+
+        <!-- Quick Search Bar -->
+        <section class="quick-search" id="quickSearch">
+            <div class="container">
+                <div class="search-studio" aria-label="Quick search studio">
+                    <div class="studio-glow" aria-hidden="true"></div>
+
+                    <div class="studio-copy">
+                        <h2>Pick your next obsession</h2>
+                        <p>Type a title, tap a mood, or hit the mic. We’ll take you straight to the good stuff.</p>
+                        <div class="studio-bar" role="search">
+                            <span class="studio-leading" aria-hidden="true">
+                                <i class="fas fa-magic"></i>
+                            </span>
+
+                            <input
+                                type="text"
+                                id="mainSearchInput"
+                                class="studio-input"
+                                placeholder="Try: space adventure, 90s comedy, Jordanian drama…"
+                                aria-label="Search movies and TV shows"
+                                autocomplete="off"
+                            />
+
+                            <button class="studio-btn ghost" id="mainRandomBtn" type="button" aria-label="Surprise me">
+                                <i class="fas fa-dice" aria-hidden="true"></i>
+                                <span>Surprise</span>
+                            </button>
+
+                            <button class="studio-btn mic" id="mainVoiceBtn" type="button" aria-label="Voice search">
+                                <i class="fas fa-microphone" aria-hidden="true"></i>
+                            </button>
+
+                            <button class="studio-btn primary" id="mainSearchBtn" type="button" aria-label="Search">
+                                <span>Search</span>
+                                <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                            </button>
+                        </div>
+
+                        <div class="studio-tray" aria-label="Quick filters">
+                            <button class="filter-chip active" data-filter="trending" type="button">🔥 Trending</button>
+                            <button class="filter-chip" data-filter="new" type="button">🆕 New Releases</button>
+                            <button class="filter-chip" data-filter="popular" type="button">⭐ Popular</button>
+                            <button class="filter-chip" data-filter="top" type="button">🏆 Top Rated</button>
+                        </div>
+
+                        <div class="studio-moods" aria-label="Mood shortcuts">
+                            <button class="mood-chip" data-query="Action movies" type="button">💥 Boom</button>
+                            <button class="mood-chip" data-query="Comedy movies" type="button">😂 Laugh</button>
+                            <button class="mood-chip" data-query="Sci fi movies" type="button">🛸 Sci‑Fi</button>
+                            <button class="mood-chip" data-query="Romance movies" type="button">💘 Romance</button>
+                            <button class="mood-chip" data-query="Horror movies" type="button">👻 Spooky</button>
+                            <button class="mood-chip" data-query="Top rated TV shows" type="button">📺 Binge</button>
+                        </div>
+
+                        <div class="studio-hint" id="studioHint" aria-live="polite"></div>
+                    </div>
+
+                    <aside class="studio-side" aria-label="Tonight's pick">
+                        <div class="pick-card" id="pickCard" role="button" tabindex="0" aria-label="Use suggested search">
+                            <div class="pick-top">
+                                <span class="pick-badge">Tonight’s pick</span>
+                                <span class="pick-spark" aria-hidden="true">
+                                    <i class="fas fa-star"></i>
+                                </span>
+                            </div>
+                            <div class="pick-title" id="pickTitle">Loading…</div>
+                            <div class="pick-sub" id="pickSub">Tap to search</div>
+                        </div>
+
+                        <div class="pick-mini">
+                            <div class="mini-dot" aria-hidden="true"></div>
+                            <span>Pro tip: say “search Dune”</span>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+<!-- Featured Categories -->
+        <section class="featured-categories" id="categories">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Browse by Category</h2>
+                    <div class="active-filter" id="activeGenreFilter" hidden>
+                        <span class="filter-label">Showing:</span>
+                        <span class="filter-value" id="activeGenreName">—</span>
+                        <button class="filter-clear" id="clearGenreFilter" type="button" aria-label="Clear category filter">
+                            <i class="fas fa-times" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <a href="movies.html" class="view-all">View All <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+                </div>
+                
+                <div class="categories-grid">
+                    <a href="movies.html?genre=28" class="category-card" data-genre-id="28" data-genre-name="Action" style="background: linear-gradient(135deg, #E50914 0%, #8B0000 100%);">
+                        <div class="category-content">
+                            <i class="fas fa-explosion" aria-hidden="true"></i>
+                            <h3>Action</h3>
+                            <p>8,542 titles</p>
+                        </div>
+                    </a>
+                    
+                    <a href="movies.html?genre=35" class="category-card" data-genre-id="35" data-genre-name="Comedy" style="background: linear-gradient(135deg, #FF6B6B 0%, #FFA500 100%);">
+                        <div class="category-content">
+                            <i class="fas fa-laugh" aria-hidden="true"></i>
+                            <h3>Comedy</h3>
+                            <p>12,345 titles</p>
+                        </div>
+                    </a>
+                    
+                    <a href="movies.html?genre=18" class="category-card" data-genre-id="18" data-genre-name="Drama" style="background: linear-gradient(135deg, #6A11CB 0%, #2575FC 100%);">
+                        <div class="category-content">
+                            <i class="fas fa-theater-masks" aria-hidden="true"></i>
+                            <h3>Drama</h3>
+                            <p>15,678 titles</p>
+                        </div>
+                    </a>
+                    
+                    <a href="movies.html?genre=27" class="category-card" data-genre-id="27" data-genre-name="Horror" style="background: linear-gradient(135deg, #2C3E50 0%, #4A235A 100%);">
+                        <div class="category-content">
+                            <i class="fas fa-ghost" aria-hidden="true"></i>
+                            <h3>Horror</h3>
+                            <p>4,321 titles</p>
+                        </div>
+                    </a>
+                    
+                    <a href="movies.html?genre=878" class="category-card" data-genre-id="878" data-genre-name="Sci‑Fi" style="background: linear-gradient(135deg, #00B4DB 0%, #0083B0 100%);">
+                        <div class="category-content">
+                            <i class="fas fa-robot" aria-hidden="true"></i>
+                            <h3>Sci-Fi</h3>
+                            <p>5,432 titles</p>
+                        </div>
+                    </a>
+                    
+                    <a href="movies.html?genre=10749" class="category-card" data-genre-id="10749" data-genre-name="Romance" style="background: linear-gradient(135deg, #FD746C 0%, #FF9068 100%);">
+                        <div class="category-content">
+                            <i class="fas fa-heart" aria-hidden="true"></i>
+                            <h3>Romance</h3>
+                            <p>9,876 titles</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trending Now -->
+        <section class="trending-section" id="trending">
+            <div class="container">
+                <div class="section-header">
+                    <h2><i class="fas fa-fire" aria-hidden="true"></i> Trending Now</h2>
+                    <div class="tab-nav">
+                        <button class="tab-btn active" data-type="all">All</button>
+                        <button class="tab-btn" data-type="movies">Movies</button>
+                        <button class="tab-btn" data-type="tv">TV Shows</button>
+                    </div>
+                </div>
+                
+                <div class="content-grid" id="trendingContent">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Streaming Platforms -->
+        <section class="platforms-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Streaming Platforms</h2>
+                    <p>Find where your favorite content is available</p>
+                </div>
+                
+                <div class="platforms-grid">
+                    <div class="platform-card" data-platform="netflix">
+                        <div class="platform-icon">
+                            <i class="fab fa-netflix" aria-hidden="true"></i>
+                        </div>
+                        <h3>Netflix</h3>
+                        <p>15K+ titles available</p>
+                        <span class="platform-tag">Most Popular</span>
+                    </div>
+                    
+                    <div class="platform-card" data-platform="prime">
+                        <div class="platform-icon">
+                            <i class="fab fa-amazon" aria-hidden="true"></i>
+                        </div>
+                        <h3>Prime Video</h3>
+                        <p>20K+ titles available</p>
+                        <span class="platform-tag">Included with Prime</span>
+                    </div>
+                    
+                    <div class="platform-card" data-platform="disney">
+                        <div class="platform-icon">
+                            <i class="fab fa-disney" aria-hidden="true"></i>
+                        </div>
+                        <h3>Disney+</h3>
+                        <p>8K+ titles available</p>
+                        <span class="platform-tag">Family Friendly</span>
+                    </div>
+                    
+                    <div class="platform-card" data-platform="hbo">
+                        <div class="platform-icon">
+                            <i class="fab fa-hbo" aria-hidden="true"></i>
+                        </div>
+                        <h3>HBO Max</h3>
+                        <p>10K+ titles available</p>
+                        <span class="platform-tag">Premium Content</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- New Releases -->
+        <section class="new-releases">
+            <div class="container">
+                <div class="section-header">
+                    <h2><i class="fas fa-calendar-star" aria-hidden="true"></i> New Releases</h2>
+                    <a href="#" class="view-all">See All <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+                </div>
+                
+                <div class="content-grid" id="newReleasesContent">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Banner -->
+        <section class="stats-banner">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <i class="fas fa-film" aria-hidden="true"></i>
+                        <div class="stat-content">
+                            <h3>250K+</h3>
+                            <p>Movies & TV Shows</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <i class="fas fa-play-circle" aria-hidden="true"></i>
+                        <div class="stat-content">
+                            <h3>50+</h3>
+                            <p>Streaming Platforms</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <i class="fas fa-users" aria-hidden="true"></i>
+                        <div class="stat-content">
+                            <h3>2M+</h3>
+                            <p>Active Users</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                        <div class="stat-content">
+                            <h3>1M+</h3>
+                            <p>Searches Daily</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Top Rated -->
+        <section class="top-rated">
+            <div class="container">
+                <div class="section-header">
+                    <h2><i class="fas fa-crown" aria-hidden="true"></i> Top Rated</h2>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">All Time</button>
+                        <button class="filter-btn" data-filter="year">This Year</button>
+                        <button class="filter-btn" data-filter="month">This Month</button>
+                    </div>
+                </div>
+                
+                <div class="content-grid" id="topRatedContent">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-content">
+                    <h2>Never Miss a Release</h2>
+                    <p>Get personalized notifications when movies and shows become available on your favorite platforms</p>
+                    <div class="cta-buttons">
+                        <button class="cta-btn primary" id="enableNotificationsBtn">
+                            <i class="fas fa-bell" aria-hidden="true"></i>
+                            Enable Notifications
+                        </button>
+                        <button class="cta-btn secondary" id="createAccountBtn">
+                            <i class="fas fa-user-plus" aria-hidden="true"></i>
+                            Create Account
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Decide For Me Modal -->
+    <div class="decide-modal" id="decideModal" hidden aria-hidden="true">
+        <div class="decide-backdrop" data-decide-close></div>
+        <div class="decide-panel" role="dialog" aria-modal="true" aria-label="Decide what to watch">
+            <div class="decide-header">
+                <div class="decide-title">
+                    <span class="decide-title-emoji" aria-hidden="true">🎯</span>
+                    <div>
+                        <h3>Decide for me</h3>
+                        <p id="decideSubtitle">Answer a few quick questions.</p>
+                    </div>
+                </div>
+                <button class="decide-close" type="button" aria-label="Close" data-decide-close>
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <div class="decide-body">
+                <!-- Step 1: Type -->
+                <div class="decide-step" data-step="1">
+                    <h4>What are you in the mood for?</h4>
+                    <div class="decide-grid">
+                        <button class="decide-chip" type="button" data-mood="boom">💥 Action</button>
+                        <button class="decide-chip" type="button" data-mood="laugh">😂 Comedy</button>
+                        <button class="decide-chip" type="button" data-mood="brainy">🧠 Thriller</button>
+                        <button class="decide-chip" type="button" data-mood="sci">🛸 Sci‑Fi</button>
+                        <button class="decide-chip" type="button" data-mood="romance">💘 Romance</button>
+                        <button class="decide-chip" type="button" data-mood="spooky">👻 Horror</button>
+                        <button class="decide-chip" type="button" data-mood="chill">🌙 Chill/Drama</button>
+                        <button class="decide-chip" type="button" data-mood="family">🍿 Family</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Format -->
+                <div class="decide-step" data-step="2" hidden>
+                    <h4>Movie or TV?</h4>
+                    <div class="decide-grid" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+                        <button class="decide-chip" type="button" data-format="movie">🎬 Movie</button>
+                        <button class="decide-chip" type="button" data-format="tv">📺 TV show</button>
+                        <button class="decide-chip" type="button" data-format="all">✨ Either</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Time -->
+                <div class="decide-step" data-step="3" hidden>
+                    <h4>How much time do you have?</h4>
+                    <div class="decide-grid" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
+                        <button class="decide-chip" type="button" data-time="short">⏱️ &lt; 90m</button>
+                        <button class="decide-chip" type="button" data-time="medium">🕒 90–120m</button>
+                        <button class="decide-chip" type="button" data-time="long">⏳ 120m+</button>
+                        <button class="decide-chip" type="button" data-time="any">🎲 Any</button>
+                    </div>
+                </div>
+
+                <!-- Results -->
+                <div class="decide-step" data-step="4" hidden>
+                    <div class="decide-results-header">
+                        <h4>Your picks</h4>
+                        <button class="decide-again" id="decideAgainBtn" type="button">Try again</button>
+                    </div>
+                    <div class="decide-loading" id="decideLoading" hidden>
+                        <div class="decide-spinner" aria-hidden="true"></div>
+                        <span>Finding great matches…</span>
+                    </div>
+                    <div class="decide-results" id="decideResults"></div>
+                </div>
+            </div>
+
+            <div class="decide-footer">
+                <button class="decide-back" id="decideBackBtn" type="button" hidden>
+                    <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                    Back
+                </button>
+                <div class="decide-progress" aria-label="Progress">
+                    <span class="dot is-active" data-dot="1"></span>
+                    <span class="dot" data-dot="2"></span>
+                    <span class="dot" data-dot="3"></span>
+                    <span class="dot" data-dot="4"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-main">
+            <div class="footer-section">
+                <h3>StreamFinder</h3>
+                <p>Your ultimate guide to streaming entertainment across all platforms.</p>
+                <div class="footer-social">
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook" aria-hidden="true"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+                    <a href="#" aria-label="TikTok"><i class="fab fa-tiktok" aria-hidden="true"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Explore</h4>
+                <a href="movies.html">Movies</a>
+                <a href="series.html">TV Shows</a>
+                <a href="#">New Releases</a>
+                <a href="#">Trending</a>
+                <a href="#">Upcoming</a>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Platforms</h4>
+                <a href="#">Netflix</a>
+                <a href="#">Prime Video</a>
+                <a href="#">Disney+</a>
+                <a href="#">Hulu</a>
+                <a href="#">HBO Max</a>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Company</h4>
+                <a href="#">About Us</a>
+                <a href="#">How It Works</a>
+                <a href="#">Blog</a>
+                <a href="#">Careers</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Support</h4>
+                <a href="#">Help Center</a>
+                <a href="#">FAQ</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Cookie Preferences</a>
+                <a href="#">Corporate Information</a>
+                <a href="#">Do Not Sell My Info</a>
+            </div>
+            
+            <div class="copyright">
+                <p>© 2024 StreamFinder. All rights reserved.</p>
+                <p class="disclaimer">
+                    StreamFinder does not host any content. We provide links to legal streaming services.
+                    All trademarks are the property of their respective owners.
+                </p>
+            </div>
+            
+            <div class="back-to-top" id="backToTop" aria-label="Back to top">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- Decide Intro Overlay -->
+    <div class="decide-intro" id="decideIntro" hidden aria-hidden="true">
+        <div class="decide-intro-backdrop" data-decide-intro-close></div>
+        <div class="decide-intro-card" role="dialog" aria-modal="true" aria-labelledby="decideIntroTitle" aria-describedby="decideIntroSubtitle">
+            <h2 id="decideIntroTitle">Don't know what to watch?</h2>
+            <p id="decideIntroSubtitle">We decide in 30 seconds.</p>
+            <div class="decide-intro-actions">
+                <button class="decide-intro-btn primary" id="decideIntroStart" type="button">?? Start Now</button>
+                <button class="decide-intro-btn ghost" id="decideIntroLater" type="button">? Maybe later</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick View Modal -->
+    <div class="modal quick-view-modal" id="quickViewModal" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="modal-content">
+            <button class="modal-close" aria-label="Close modal">&times;</button>
+            <div class="quick-view-content" id="quickViewContent">
+                <!-- Quick view loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="global-loader" id="globalLoader" aria-hidden="true">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <!-- Scripts (optimized loading) -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+    
+    <!-- Core scripts -->
+    <script src="/script/ui/header.js" defer></script>
+    
+    <!-- Page-specific script -->
+    <script type="module" src="/script/pages/index.js" defer></script>
+    
+    <!-- Inline initialization -->
+    <script>
+        // Optimized DOM ready handler
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial theme
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            // Hide loader
+            const loader = document.getElementById('globalLoader');
+            if (loader) loader.style.display = 'none';
+        });
+    </script>
+    <script type="module" src="/script/api/tmdb-global.js" defer></script>
+    <script src="/script/pwa.js" defer></script>
+    <script src="/script/ui/header-page.js" defer></script>
+</body>
+</html>
