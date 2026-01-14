@@ -23,6 +23,8 @@
     { "source": "/auth", "destination": "/client/Pages/auth.html" },
     { "source": "/details", "destination": "/client/Pages/details.html" },
     { "source": "/details.html", "destination": "/client/Pages/details.html" },
+    { "source": "/offline", "destination": "/client/Pages/offline.html" },
+    { "source": "/offline.html", "destination": "/client/Pages/offline.html" },
     { "source": "/movie/:slug", "destination": "/client/Pages/details.html" },
     { "source": "/tv/:slug", "destination": "/client/Pages/details.html" }
   ]
