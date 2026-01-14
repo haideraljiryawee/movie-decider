@@ -22,10 +22,31 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // If we're on a search results page
-    if (window.location.pathname.includes('p_search.html')) {
+    if (window.location.pathname.includes('/search')) {
         loadSearchResults();
     }
 });
+
+function slugify(value) {
+    return String(value || '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
+function buildContentSlug(title, year) {
+    const base = slugify(title);
+    if (!base) return '';
+    const yearValue = Number.isFinite(Number(year)) ? String(year) : '';
+    return yearValue ? `${base}-${yearValue}` : base;
+}
+
+function getDetailsUrl({ id, type, title, year }) {
+    const safeType = type === 'tv' ? 'tv' : 'movie';
+    const slug = buildContentSlug(title, year);
+    if (slug) return `/${safeType}/${slug}`;
+    return `/details.html?id=${id}&type=${safeType}`;
+}
 
 function performSearch() {
     const searchInput = document.getElementById('searchInput');
@@ -40,7 +61,7 @@ function performSearch() {
         saveToRecentSearches(query);
         
         // Redirect to search results page
-        window.location.href = `p_search.html?q=${encodeURIComponent(query)}`;
+        window.location.href = `/search?q=${encodeURIComponent(query)}`;
     } else {
         // Show error or focus the input
         searchInput.focus();
@@ -250,15 +271,23 @@ function createSearchResultCard(item) {
     const viewBtn = card.querySelector('.view-details-btn');
     viewBtn.addEventListener('click', function(e) {
         e.stopPropagation();
-        const id = this.dataset.id;
-        const type = this.dataset.type;
-        window.location.href = `details.html?id=${id}&type=${type}`;
+        const url = getDetailsUrl({
+            id: item.id,
+            type: item.type,
+            title: item.title,
+            year: item.year
+        });
+        window.location.href = url;
     });
     
     card.addEventListener('click', function() {
-        const id = this.dataset.id;
-        const type = this.dataset.type;
-        window.location.href = `details.html?id=${id}&type=${type}`;
+        const url = getDetailsUrl({
+            id: item.id,
+            type: item.type,
+            title: item.title,
+            year: item.year
+        });
+        window.location.href = url;
     });
     
     return card;

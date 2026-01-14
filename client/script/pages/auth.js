@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('auth_token', data.token);
       setMessage('Success! Redirecting...', 'success');
       setTimeout(() => {
-        window.location.href = 'index.html';
+        window.location.href = '/';
       }, 700);
     } catch (err) {
       setMessage(err.message || 'Something went wrong.', 'error');

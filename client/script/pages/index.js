@@ -3,6 +3,27 @@ import tmdbService from '../api/tmdb.js';
 import { getPlatformUrl } from '../core/platformRouter.js';
 import { getTaste, updateTaste, bumpMedia } from '../core/taste.js';
 
+function slugify(value) {
+    return String(value || '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
+function buildContentSlug(title, year) {
+    const base = slugify(title);
+    if (!base) return '';
+    const yearValue = Number.isFinite(Number(year)) ? String(year) : '';
+    return yearValue ? `${base}-${yearValue}` : base;
+}
+
+function getDetailsUrl({ id, type, title, year }) {
+    const safeType = type === 'tv' ? 'tv' : 'movie';
+    const slug = buildContentSlug(title, year);
+    if (slug) return `/${safeType}/${slug}`;
+    return `/details.html?id=${id}&type=${safeType}`;
+}
+
 function getTopTasteKey(map) {
     if (!map || typeof map !== 'object') return '';
     let bestKey = '';
@@ -152,11 +173,14 @@ class Homepage {
                                 <button class="slide-btn primary" 
                                         data-id="${movie.id}" 
                                         data-title="${this.escapeHtml(formatted.title)}"
+                                        data-year="${formatted.year || ''}"
                                         aria-label="Watch ${formatted.title}">
                                     <i class="fas fa-play" aria-hidden="true"></i> Watch Now
                                 </button>
                                 <button class="slide-btn secondary" 
                                         data-id="${movie.id}"
+                                        data-title="${this.escapeHtml(formatted.title)}"
+                                        data-year="${formatted.year || ''}"
                                         aria-label="More info about ${formatted.title}">
                                     <i class="fas fa-info-circle" aria-hidden="true"></i> More Info
                                 </button>
@@ -230,13 +254,19 @@ class Homepage {
             
             const movieId = slideBtn.dataset.id;
             const title = slideBtn.dataset.title;
+            const year = slideBtn.dataset.year;
             
             if (!movieId) return;
             
             if (slideBtn.classList.contains('primary')) {
                 this.showPlatformSelection(movieId, title);
             } else {
-                window.location.href = `details.html?id=${movieId}&type=movie`;
+                window.location.href = getDetailsUrl({
+                    id: movieId,
+                    type: 'movie',
+                    title,
+                    year
+                });
             }
         });
     }
@@ -351,7 +381,7 @@ class Homepage {
             const formatted = tmdbService.formatContent(item, type);
             
             return `
-                <article class="content-card" role="article" aria-label="${formatted.title}" data-id="${item.id}" data-type="${type}" tabindex="0">
+                <article class="content-card" role="article" aria-label="${formatted.title}" data-id="${item.id}" data-type="${type}" data-title="${this.escapeHtml(formatted.title)}" data-year="${formatted.year || ''}" tabindex="0">
                     <div class="card-poster">
                         <img src="${formatted.poster}" 
                              alt="${formatted.title}"
@@ -386,11 +416,18 @@ class Homepage {
         container.querySelectorAll('.content-card').forEach(card => {
             const id = card.dataset.id;
             const type = card.dataset.type;
+            const title = card.dataset.title;
+            const year = card.dataset.year;
 
             card.addEventListener('click', (e) => {
                 if (!id || !type) return;
                 if (!e.target.closest('button')) {
-                    window.location.href = `details.html?id=${id}&type=${type}`;
+                    window.location.href = getDetailsUrl({
+                        id,
+                        type,
+                        title,
+                        year
+                    });
                 }
             });
             
@@ -399,7 +436,12 @@ class Homepage {
                 if (!id || !type) return;
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    window.location.href = `details.html?id=${id}&type=${type}`;
+                    window.location.href = getDetailsUrl({
+                        id,
+                        type,
+                        title,
+                        year
+                    });
                 }
             });
         });
@@ -706,7 +748,7 @@ class Homepage {
         // Platform cards
         document.querySelectorAll('.platform-card').forEach(card => {
             card.addEventListener('click', () => {
-                window.location.href = `movies.html?platform=${card.dataset.platform}`;
+                window.location.href = `/movies?platform=${card.dataset.platform}`;
             });
         });
         
@@ -1217,6 +1259,12 @@ class Homepage {
             const rating = formatted.rating || 'N/A';
             const runtime = minutes ? `${minutes}m` : (this.decide.time === 'any' ? '—' : '—');
             const safeTitle = this.escapeString(formatted.title);
+            const detailsUrl = getDetailsUrl({
+                id: item.id,
+                type,
+                title: formatted.title,
+                year
+            });
 
             return `
                 <div class="decide-card" role="article" aria-label="${this.escapeHtml(formatted.title)}">
@@ -1236,7 +1284,7 @@ class Homepage {
                                 <i class="fas fa-play" aria-hidden="true"></i> Watch
                             </button>
                             <button class="decide-action secondary" type="button"
-                                onclick="window.location.href='details.html?id=${item.id}&type=${type}'">
+                                onclick="window.location.href='${detailsUrl}'">
                                 <i class="fas fa-info-circle" aria-hidden="true"></i> Details
                             </button>
                         </div>
@@ -1287,7 +1335,7 @@ filterQuickSearch(filter) {
     performSearch(query) {
         const trimmedQuery = query.trim();
         if (trimmedQuery) {
-            window.location.href = `p_search.html?q=${encodeURIComponent(trimmedQuery)}`;
+            window.location.href = `/search?q=${encodeURIComponent(trimmedQuery)}`;
         }
     }
     
@@ -1551,7 +1599,7 @@ filterQuickSearch(filter) {
                         <h2 class="slide-title">Welcome to StreamFinder</h2>
                         <p class="slide-description">Discover movies and TV shows across all streaming platforms.</p>
                         <div class="slide-actions">
-                            <button class="slide-btn primary" onclick="window.location.href='movies.html'">
+                            <button class="slide-btn primary" onclick="window.location.href='/movies'">
                                 <i class="fas fa-play"></i> Browse Movies
                             </button>
                         </div>

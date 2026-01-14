@@ -3,6 +3,27 @@ import tmdbService from '../api/tmdb.js';
 import { getPlatformUrl } from '../core/platformRouter.js';
 import { initCustomDropdowns } from '../components/customDropdown.js';
 
+function slugify(value) {
+    return String(value || '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
+function buildContentSlug(title, year) {
+    const base = slugify(title);
+    if (!base) return '';
+    const yearValue = Number.isFinite(Number(year)) ? String(year) : '';
+    return yearValue ? `${base}-${yearValue}` : base;
+}
+
+function getDetailsUrl({ id, type, title, year }) {
+    const safeType = type === 'tv' ? 'tv' : 'movie';
+    const slug = buildContentSlug(title, year);
+    if (slug) return `/${safeType}/${slug}`;
+    return `/details.html?id=${id}&type=${safeType}`;
+}
+
 // Current state
 let currentPage = 1;
 let currentView = 'popular';
@@ -93,10 +114,10 @@ async function loadHeroSlider() {
                         </div>
                         <p class="slide-description">${formatted.overview || 'No description available.'}</p>
                         <div class="slide-actions">
-                            <button class="slide-btn primary" data-id="${series.id}" data-title="${formatted.title}">
+                            <button class="slide-btn primary" data-id="${series.id}" data-title="${formatted.title}" data-year="${formatted.year || ''}">
                                 <i class="fas fa-play"></i> Watch Now
                             </button>
-                            <button class="slide-btn secondary" data-id="${series.id}">
+                            <button class="slide-btn secondary" data-id="${series.id}" data-title="${formatted.title}" data-year="${formatted.year || ''}">
                                 <i class="fas fa-info-circle"></i> More Info
                             </button>
                         </div>
@@ -216,7 +237,12 @@ function setupSliderButtonListeners() {
             showPlatformSelection(movieId, title);
         } else if (slideBtn.classList.contains('secondary')) {
             // More Info
-            window.location.href = `details.html?id=${movieId}&type=tv`;
+            window.location.href = getDetailsUrl({
+                id: movieId,
+                type: 'tv',
+                title: slideBtn.getAttribute('data-title'),
+                year: slideBtn.getAttribute('data-year')
+            });
         }
     }, true); // Use capture phase to ensure event is caught
     
@@ -234,7 +260,12 @@ function setupSliderButtonListeners() {
                 if (this.classList.contains('primary')) {
                     showPlatformSelection(movieId, title);
                 } else {
-                    window.location.href = `details.html?id=${movieId}&type=tv`;
+                    window.location.href = getDetailsUrl({
+                        id: movieId,
+                        type: 'tv',
+                        title: button.getAttribute('data-title'),
+                        year: button.getAttribute('data-year')
+                    });
                 }
             }, { capture: true });
         });
@@ -708,14 +739,24 @@ function createSeriesCard(series) {
     if (viewDetailsBtn) {
         viewDetailsBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            window.location.href = `details.html?id=${series.id}&type=tv`;
+            window.location.href = getDetailsUrl({
+                id: series.id,
+                type: 'tv',
+                title: formatted.title,
+                year: formatted.year
+            });
         });
     }
     
     // Click on card itself goes to details
     card.addEventListener('click', function(e) {
         if (!e.target.closest('button') && !e.target.closest('.season-badge')) {
-            window.location.href = `details.html?id=${series.id}&type=tv`;
+            window.location.href = getDetailsUrl({
+                id: series.id,
+                type: 'tv',
+                title: formatted.title,
+                year: formatted.year
+            });
         }
     });
     
@@ -808,7 +849,7 @@ function showErrorState(errorMessage = 'Unknown error') {
 function performSearch(query) {
     const trimmedQuery = query.trim();
     if (trimmedQuery) {
-        window.location.href = `p_search.html?q=${encodeURIComponent(trimmedQuery)}`;
+        window.location.href = `/search?q=${encodeURIComponent(trimmedQuery)}`;
     }
 }
 

@@ -419,6 +419,8 @@ function handleCardClick(e) {
     
     const id = card.dataset.id;
     const type = card.dataset.type;
+    const title = card.dataset.title;
+    const year = card.dataset.year;
     
     // If clicking the button or its children
     if (e.target.closest('.view-details-btn')) {
@@ -426,7 +428,7 @@ function handleCardClick(e) {
     }
     
     if (id && type) {
-        navigateToDetails(id, type);
+        navigateToDetails(id, type, title, year);
     }
 }
 
@@ -559,7 +561,7 @@ function setupSearchPageListeners(query) {
             const newQuery = searchInput.value.trim();
             if (newQuery) {
                 saveToRecentSearches(newQuery);
-                window.location.href = `p_search.html?q=${encodeURIComponent(newQuery)}`;
+                window.location.href = `/search?q=${encodeURIComponent(newQuery)}`;
             } else {
                 searchInput.focus();
                 searchInput.classList.add('error');
@@ -573,12 +575,33 @@ function setupSearchPageListeners(query) {
 }
 
 // ========== UTILITY FUNCTIONS ==========
-function navigateToDetails(id, type) {
+function slugify(value) {
+    return String(value || '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
+function buildContentSlug(title, year) {
+    const base = slugify(title);
+    if (!base) return '';
+    const yearValue = Number.isFinite(Number(year)) ? String(year) : '';
+    return yearValue ? `${base}-${yearValue}` : base;
+}
+
+function getDetailsUrl({ id, type, title, year }) {
+    const safeType = type === 'tv' ? 'tv' : 'movie';
+    const slug = buildContentSlug(title, year);
+    if (slug) return `/${safeType}/${slug}`;
+    return `/details.html?id=${id}&type=${safeType}`;
+}
+
+function navigateToDetails(id, type, title, year) {
     if (!id || !type || (type !== 'movie' && type !== 'tv')) {
-        console.error('Invalid navigation parameters:', { id, type });
+        console.error('Invalid navigation parameters:', { id, type, title, year });
         return;
     }
-    window.location.href = `details.html?id=${id}&type=${type}`;
+    window.location.href = getDetailsUrl({ id, type, title, year });
 }
 
 function saveToRecentSearches(query) {

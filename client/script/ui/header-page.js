@@ -1,38 +1,37 @@
 // /script/ui/header-page.js
 // Page-aware nav highlighting + search submit + safe hash links
 (() => {
-  const getFile = () => {
-    const p = window.location.pathname;
-    return p.split('/').pop() || 'index.html';
-  };
+  const getPath = () => window.location.pathname || '/';
 
   const setActiveNav = () => {
-    const file = getFile().toLowerCase();
+    const path = getPath().toLowerCase();
     const navItems = document.querySelectorAll('header .nav-item');
     if (!navItems.length) return;
 
     navItems.forEach(a => a.classList.remove('active'));
 
     // Determine active by current file
-    let activeHref = 'index.html';
-    if (file === 'movies.html') activeHref = 'movies.html';
-    if (file === 'series.html') activeHref = 'series.html';
-    if (file === 'contact.html') activeHref = 'contact.html';
+    let activeHref = '/';
+    if (path.startsWith('/movies')) activeHref = '/movies';
+    if (path.startsWith('/series')) activeHref = '/series';
+    if (path.startsWith('/contact')) activeHref = '/contact';
     // details & search pages: no main active (or keep Home)
-    if (file === 'details.html' || file === 'p_search.html' || file === 'offline.html') activeHref = 'index.html';
+    if (path.startsWith('/details') || path.startsWith('/movie/') || path.startsWith('/tv/') || path.startsWith('/search') || path.startsWith('/offline')) {
+      activeHref = '/';
+    }
 
     navItems.forEach(a => {
       const href = (a.getAttribute('href') || '').toLowerCase();
-      if (href.endsWith(activeHref)) a.classList.add('active');
+      if (href === activeHref) a.classList.add('active');
     });
   };
 
   const fixHashLinks = () => {
-    const file = getFile().toLowerCase();
-    const isIndex = file === 'index.html' || file === '';
+    const path = getPath().toLowerCase();
+    const isIndex = path === '/' || path.endsWith('/index.html');
     document.querySelectorAll('header a[href^="#"]').forEach(a => {
       const hash = a.getAttribute('href');
-      if (!isIndex) a.setAttribute('href', `index.html${hash}`);
+      if (!isIndex) a.setAttribute('href', `/${hash}`);
     });
   };
 
@@ -43,7 +42,7 @@
     const go = () => {
       const q = (input.value || '').trim();
       if (!q) return;
-      window.location.href = `p_search.html?q=${encodeURIComponent(q)}`;
+      window.location.href = `/search?q=${encodeURIComponent(q)}`;
     };
 
     // Enter submits
@@ -77,7 +76,7 @@
     setupSearchSubmit();
 
     // If we landed on index.html#something, smooth scroll nicely (no "stays at home" confusion for page links)
-    if (window.location.hash && (getFile().toLowerCase() === 'index.html')) {
+    if (window.location.hash && (getPath().toLowerCase() === '/' || getPath().toLowerCase().endsWith('/index.html'))) {
       const el = document.getElementById(window.location.hash.slice(1));
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }

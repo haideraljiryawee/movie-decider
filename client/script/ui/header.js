@@ -1,6 +1,27 @@
 // /script/header.js - Optimized Header Functionality
 'use strict';
 
+function slugify(value) {
+    return String(value || '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
+function buildContentSlug(title, year) {
+    const base = slugify(title);
+    if (!base) return '';
+    const yearValue = Number.isFinite(Number(year)) ? String(year) : '';
+    return yearValue ? `${base}-${yearValue}` : base;
+}
+
+function getDetailsUrl({ id, type, title, year }) {
+    const safeType = type === 'tv' ? 'tv' : 'movie';
+    const slug = buildContentSlug(title, year);
+    if (slug) return `/${safeType}/${slug}`;
+    return `/details.html?id=${id}&type=${safeType}`;
+}
+
 class HeaderManager {
     constructor() {
         this.header = document.getElementById('header');
@@ -217,11 +238,17 @@ class HeaderManager {
         const suggestionsHTML = items.map(item => {
             const type = item.media_type || (item.title ? 'movie' : 'tv');
             const formatted = window.tmdbService.formatContent(item, type);
-            const year = formatted.year ? new Date(formatted.year).getFullYear() : 'N/A';
+            const year = formatted.year && formatted.year !== 'N/A' ? formatted.year : '';
+            const detailsUrl = getDetailsUrl({
+                id: item.id,
+                type,
+                title: formatted.title,
+                year
+            });
             
             return `
                 <div class="suggestion-item" 
-                     onclick="window.location.href='details.html?id=${item.id}&type=${type}'"
+                     onclick="window.location.href='${detailsUrl}'"
                      role="option">
                     <img src="${formatted.poster}" 
                          alt="${formatted.title}"
@@ -388,7 +415,7 @@ class HeaderManager {
             .filter(Boolean);
 
         const goAuth = (hash = '') => {
-            window.location.href = `auth.html${hash}`;
+            window.location.href = `/auth${hash}`;
         };
 
         if (createAccountBtn) {
@@ -414,7 +441,7 @@ class HeaderManager {
                 };
             } else {
                 authLink.innerHTML = '<i class="fas fa-sign-in-alt" aria-hidden="true"></i><span>Login / Register</span>';
-                authLink.setAttribute('href', 'auth.html');
+                authLink.setAttribute('href', '/auth');
                 authLink.onclick = (e) => {
                     e.preventDefault();
                     goAuth();
@@ -427,7 +454,7 @@ class HeaderManager {
             if (nameEl) nameEl.textContent = 'Guest';
             if (statusEl) statusEl.textContent = 'Not signed in';
             bindAuthLink('login');
-            setProfileLinks('auth.html');
+            setProfileLinks('/auth');
             return;
         }
 
@@ -446,7 +473,7 @@ class HeaderManager {
                 if (nameEl) nameEl.textContent = 'Guest';
                 if (statusEl) statusEl.textContent = 'Not signed in';
                 bindAuthLink('login');
-                setProfileLinks('auth.html');
+                setProfileLinks('/auth');
             });
     }
 

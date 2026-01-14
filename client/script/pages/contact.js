@@ -5,7 +5,7 @@ export function initializeContactPage() {
     // Set active navigation link
     const navLinks = document.querySelectorAll('.nav-links a, .mobile-menu a');
     navLinks.forEach(link => {
-        if (link.textContent.includes('Contact') || link.href.includes('contact.html')) {
+        if (link.textContent.includes('Contact') || link.href.includes('/contact')) {
             link.classList.add('active');
         } else {
             link.classList.remove('active');

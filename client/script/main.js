@@ -16,6 +16,27 @@ document.addEventListener('DOMContentLoaded', function() {
     setupHomepageInteractions();
 });
 
+function slugify(value) {
+    return String(value || '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
+function buildContentSlug(title, year) {
+    const base = slugify(title);
+    if (!base) return '';
+    const yearValue = Number.isFinite(Number(year)) ? String(year) : '';
+    return yearValue ? `${base}-${yearValue}` : base;
+}
+
+function getDetailsUrl({ id, type, title, year }) {
+    const safeType = type === 'tv' ? 'tv' : 'movie';
+    const slug = buildContentSlug(title, year);
+    if (slug) return `/${safeType}/${slug}`;
+    return `/details.html?id=${id}&type=${safeType}`;
+}
+
 async function loadHomepageContent() {
     console.log('Loading homepage content...');
     
@@ -131,7 +152,13 @@ function createContentCard(item) {
     card.addEventListener('click', function() {
         const id = this.dataset.id;
         const type = this.dataset.type;
-        window.location.href = `details.html?id=${id}&type=${type}`;
+        const url = getDetailsUrl({
+            id,
+            type,
+            title: item.title,
+            year: item.year
+        });
+        window.location.href = url;
     });
     
     return card;

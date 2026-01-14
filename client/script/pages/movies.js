@@ -1,6 +1,27 @@
 // Movies Page JavaScript - OPTIMIZED
 import tmdbService from '../api/tmdb.js';
 import { getPlatformUrl } from '../core/platformRouter.js';
+
+function slugify(value) {
+    return String(value || '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
+function buildContentSlug(title, year) {
+    const base = slugify(title);
+    if (!base) return '';
+    const yearValue = Number.isFinite(Number(year)) ? String(year) : '';
+    return yearValue ? `${base}-${yearValue}` : base;
+}
+
+function getDetailsUrl({ id, type, title, year }) {
+    const safeType = type === 'tv' ? 'tv' : 'movie';
+    const slug = buildContentSlug(title, year);
+    if (slug) return `/${safeType}/${slug}`;
+    return `/details.html?id=${id}&type=${safeType}`;
+}
 import { initCustomDropdowns } from '../components/customDropdown.js';
 
 let heroSlider = null;
@@ -90,11 +111,14 @@ async function loadHeroSlider() {
                             <button class="slide-btn primary watch-now-btn" 
                                     data-id="${movie.id}" 
                                     data-title="${formatted.title}"
+                                    data-year="${formatted.year || ''}"
                                     style="pointer-events: auto; z-index: 1001; position: relative;">
                                 <i class="fas fa-play"></i> Watch Now
                             </button>
                             <button class="slide-btn secondary more-info-btn" 
                                     data-id="${movie.id}"
+                                    data-title="${formatted.title}"
+                                    data-year="${formatted.year || ''}"
                                     style="pointer-events: auto; z-index: 1001; position: relative;">
                                 <i class="fas fa-info-circle"></i> More Info
                             </button>
@@ -215,9 +239,16 @@ function setupButtonListeners() {
             
             const button = e.target.closest('.more-info-btn');
             const movieId = button.getAttribute('data-id');
+            const title = button.getAttribute('data-title');
+            const year = button.getAttribute('data-year');
             
             console.log('More Info clicked for movie:', movieId);
-            window.location.href = `details.html?id=${movieId}&type=movie`;
+            window.location.href = getDetailsUrl({
+                id: movieId,
+                type: 'movie',
+                title,
+                year
+            });
             return false;
         }
         
@@ -246,11 +277,17 @@ function setupButtonListeners() {
                 
                 const movieId = this.getAttribute('data-id');
                 const title = this.getAttribute('data-title');
+                const year = this.getAttribute('data-year');
                 
                 if (this.classList.contains('watch-now-btn')) {
                     showPlatformSelection(movieId, title);
                 } else {
-                    window.location.href = `details.html?id=${movieId}&type=movie`;
+                    window.location.href = getDetailsUrl({
+                        id: movieId,
+                        type: 'movie',
+                        title,
+                        year
+                    });
                 }
             }, { capture: true });
         });
@@ -707,14 +744,24 @@ function createMovieCard(movie) {
     if (viewDetailsBtn) {
         viewDetailsBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            window.location.href = `details.html?id=${movie.id}&type=movie`;
+            window.location.href = getDetailsUrl({
+                id: movie.id,
+                type: 'movie',
+                title: formatted.title,
+                year: formatted.year
+            });
         });
     }
     
     // Click on card itself goes to details
     card.addEventListener('click', function(e) {
         if (!e.target.closest('button')) {
-            window.location.href = `details.html?id=${movie.id}&type=movie`;
+            window.location.href = getDetailsUrl({
+                id: movie.id,
+                type: 'movie',
+                title: formatted.title,
+                year: formatted.year
+            });
         }
     });
     
@@ -851,7 +898,7 @@ function showErrorState(errorMessage = 'Unknown error') {
 function performSearch(query) {
     const trimmedQuery = query.trim();
     if (trimmedQuery) {
-        window.location.href = `p_search.html?q=${encodeURIComponent(trimmedQuery)}`;
+        window.location.href = `/search?q=${encodeURIComponent(trimmedQuery)}`;
     }
 }
 
