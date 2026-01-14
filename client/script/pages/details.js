@@ -15,6 +15,14 @@ function track(event, meta = {}) {
     }).catch(() => {});
 }
 
+function scrollToTop(behavior = 'auto') {
+    try {
+        window.scrollTo({ top: 0, behavior });
+    } catch (e) {
+        window.scrollTo(0, 0);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('dYZ? Details page loaded');
 
@@ -29,6 +37,7 @@ async function initDetailsPage() {
         const resolved = await resolveSlugToContent(route.slug, route.type);
         if (resolved && resolved.id) {
             console.log('dY"< Loading details for slug:', route.slug);
+            scrollToTop('auto');
             await loadContentDetails(resolved.id, resolved.type, { history: 'replace' });
             return;
         }
@@ -52,6 +61,7 @@ async function initDetailsPage() {
         return;
     }
 
+    scrollToTop('auto');
     await loadContentDetails(contentId, contentType, { history: 'replace' });
 }
 
@@ -61,6 +71,7 @@ async function loadContentDetails(id, type, options = {}) {
         
         // Show loading, hide content and error
         showLoading(true);
+        scrollToTop('auto');
         
         // Get ALL data at once
         const content = await fetchContentDetails(id, type);
@@ -366,6 +377,7 @@ function updateRouteForContent(content, type, historyMode) {
 function handlePopState(event) {
     const state = event.state;
     if (state && state.movieId) {
+        scrollToTop('auto');
         loadContentDetails(state.movieId, state.type || 'movie', { history: 'none' });
         return;
     }
@@ -374,6 +386,7 @@ function handlePopState(event) {
     if (route) {
         resolveSlugToContent(route.slug, route.type).then((resolved) => {
             if (resolved && resolved.id) {
+                scrollToTop('auto');
                 loadContentDetails(resolved.id, resolved.type, { history: 'none' });
             } else {
                 showError('Unable to resolve movie from URL.');
@@ -386,12 +399,14 @@ function handlePopState(event) {
     const contentId = urlParams.get('id');
     const contentType = urlParams.get('type') || 'movie';
     if (contentId && /^\d+$/.test(contentId)) {
+        scrollToTop('auto');
         loadContentDetails(contentId, contentType, { history: 'none' });
     }
 }
 
 function navigateToContentDetails(id, type) {
     if (!id) return;
+    scrollToTop('smooth');
     loadContentDetails(id, type || 'movie', { history: 'push' });
 }
 
