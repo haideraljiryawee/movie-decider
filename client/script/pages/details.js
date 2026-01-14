@@ -15,6 +15,81 @@ function track(event, meta = {}) {
     }).catch(() => {});
 }
 
+const WATCHLIST_KEY = 'streamfinder_watchlist';
+
+function readWatchlist() {
+    try {
+        const raw = localStorage.getItem(WATCHLIST_KEY);
+        return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function writeWatchlist(list) {
+    try {
+        localStorage.setItem(WATCHLIST_KEY, JSON.stringify(list));
+    } catch (e) {
+        // Ignore storage failures
+    }
+}
+
+function findWatchlistIndex(list, id, type) {
+    return list.findIndex((item) => String(item.id) === String(id) && item.type === type);
+}
+
+function toggleWatchlistItem(item) {
+    const list = readWatchlist();
+    const index = findWatchlistIndex(list, item.id, item.type);
+    let added = false;
+
+    if (index >= 0) {
+        list.splice(index, 1);
+    } else {
+        list.unshift({ ...item, updatedAt: Date.now() });
+        added = true;
+    }
+
+    writeWatchlist(list);
+    return added;
+}
+
+function updateWatchlistButton(btn, inList) {
+    if (!btn) return;
+    btn.setAttribute('aria-pressed', inList ? 'true' : 'false');
+    btn.innerHTML = inList
+        ? '<i class="fas fa-check"></i> In My List'
+        : '<i class="fas fa-plus"></i> Add to My List';
+}
+
+function setupWatchlistButton(content, type) {
+    const addToListBtn = document.querySelector('.add-to-list-btn');
+    if (!addToListBtn || !content?.id) return;
+
+    const item = {
+        id: content.id,
+        type: type === 'tv' ? 'tv' : 'movie',
+        title: content.title || 'Untitled',
+        year: content.year || 'N/A',
+        poster: content.poster || '',
+        rating: content.rating || 'N/A'
+    };
+
+    let inList = findWatchlistIndex(readWatchlist(), item.id, item.type) >= 0;
+    updateWatchlistButton(addToListBtn, inList);
+
+    addToListBtn.onclick = () => {
+        inList = toggleWatchlistItem(item);
+        updateWatchlistButton(addToListBtn, inList);
+        track('watchlist_toggle', {
+            id: item.id,
+            type: item.type,
+            title: item.title,
+            action: inList ? 'added' : 'removed'
+        });
+    };
+}
+
 function scrollToTop(behavior = 'auto') {
     try {
         window.scrollTo({ top: 0, behavior });
@@ -100,6 +175,7 @@ async function loadContentDetails(id, type, options = {}) {
         loadCast(content);
         loadSimilarContent(content, type);
         loadStreamingOptions(content, type);
+        setupWatchlistButton(content, type);
         
         // Show main content
         showLoading(false);
@@ -731,23 +807,16 @@ function loadStreamingOptions(content, type) {
     if (watchNowNote) watchNowNote.hidden = true;
     
     const platforms = [
-        { key: 'netflix', name: 'Netflix', icon: 'fab fa-netflix', available: Math.random() > 0.5 },
-        { key: 'prime', name: 'Prime Video', icon: 'fab fa-amazon', available: Math.random() > 0.7 },
-        { key: 'disney', name: 'Disney+', icon: 'fab fa-disney', available: Math.random() > 0.4 },
-        { key: 'hulu', name: 'Hulu', icon: 'fab fa-hulu', available: Math.random() > 0.6 },
-        { key: 'hbo', name: 'HBO Max', icon: 'fab fa-hbo', available: Math.random() > 0.3 },
-        { key: 'apple', name: 'Apple TV+', icon: 'fab fa-apple', available: Math.random() > 0.5 },
-        { key: 'oneshows', name: '1Shows', icon: 'fas fa-globe', available: true }
+        { key: 'netflix', name: 'Netflix', icon: 'fab fa-netflix' },
+        { key: 'prime', name: 'Prime Video', icon: 'fab fa-amazon' },
+        { key: 'disney', name: 'Disney+', icon: 'fab fa-disney' },
+        { key: 'apple', name: 'Apple TV+', icon: 'fab fa-apple' },
+        { key: 'hulu', name: 'Hulu', icon: 'fab fa-hulu' },
+        { key: 'hbo', name: 'HBO Max', icon: 'fab fa-hbo' },
+        { key: 'google', name: 'Google Play', icon: 'fab fa-google-play' }
     ];
     
-    const availablePlatforms = platforms.filter(p => p.available);
-    
-    if (availablePlatforms.length === 0) {
-        streamingPlatforms.innerHTML = '<div class="platform not-available">Not available for streaming</div>';
-        return;
-    }
-    
-    availablePlatforms.forEach((platform, index) => {
+    platforms.forEach((platform, index) => {
         const platformElement = document.createElement('div');
         platformElement.className = 'platform';
         platformElement.innerHTML = `
@@ -763,7 +832,7 @@ function loadStreamingOptions(content, type) {
             region: 'US',
             id: content.id
         });
-
+        
         platformElement.addEventListener('click', () => {
             const url = platformUrl;
             if (url) {
@@ -797,15 +866,6 @@ function loadStreamingOptions(content, type) {
 }
 
 function setupEventListeners() {
-    // Add to list button
-    const addToListBtn = document.querySelector('.add-to-list-btn');
-    if (addToListBtn) {
-        addToListBtn.addEventListener('click', function() {
-            const title = document.getElementById('detailTitle')?.textContent || 'Content';
-            alert(`"${title}" has been added to your watchlist!`);
-        });
-    }
-    
     // Share button
     const shareBtn = document.querySelector('.share-btn');
     if (shareBtn) {

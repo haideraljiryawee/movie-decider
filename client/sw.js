@@ -1,14 +1,14 @@
 /* sw.js - StreamFinder PWA Service Worker */
-const CACHE_NAME = 'streamfinder-v1';
+const CACHE_NAME = 'streamfinder-v2';
 const CORE_ASSETS = [
   '/',
-  '/Pages/index.html',
-  '/Pages/movies.html',
-  '/Pages/series.html',
-  '/Pages/contact.html',
-  '/Pages/p_search.html',
-  '/Pages/details.html',
-  '/Pages/offline.html',
+  '/movies',
+  '/series',
+  '/contact',
+  '/search',
+  '/details',
+  '/offline',
+  '/manifest.json',
   '/Style/shared.css',
   '/Style/index.css',
   '/Style/movies.css',
@@ -20,6 +20,8 @@ const CORE_ASSETS = [
   '/script/ui/header.js',
   '/script/ui/header-page.js',
   '/script/api/tmdb-global.js',
+  '/assets/icon-192.png',
+  '/assets/icon-512.png'
 ];
 
 // Install: cache core assets
@@ -64,11 +66,10 @@ self.addEventListener("fetch", (event) => {
           if (!res || res.status !== 200 || res.type !== "basic") return res;
 
           const clone = res.clone();
-          caches.open("app-cache-v1").then((cache) => cache.put(req, clone));
+          caches.open("app-cache-v2").then((cache) => cache.put(req, clone));
           return res;
         })
         .catch(() => caches.match("/offline.html"));
     })
   );
 });
-

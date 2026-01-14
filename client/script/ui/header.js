@@ -47,6 +47,7 @@ class HeaderManager {
         this.setupScrollHandler();
         this.setupTheme();
         this.setupSearch();
+        this.injectMyListLinks();
         this.setupAccessibility();
         this.setupAuth();
         
@@ -400,9 +401,48 @@ class HeaderManager {
             });
         }
     }
+
+    injectMyListLinks() {
+        const nav = document.querySelector('header .nav-container');
+        let link = nav?.querySelector('[data-nav="my-list"]') || null;
+        if (nav && !link) {
+            link = document.createElement('a');
+            link.href = '/movies?view=watchlist';
+            link.className = 'nav-item';
+            link.setAttribute('data-nav', 'my-list');
+            link.innerHTML = `
+                <div class="nav-icon">
+                    <i class="fas fa-heart" aria-hidden="true"></i>
+                </div>
+                <span class="nav-label">My List</span>
+                <div class="nav-indicator" aria-hidden="true"></div>
+            `;
+            nav.appendChild(link);
+        }
+
+        const mobileNav = document.querySelector('.mobile-nav');
+        let mobileLink = mobileNav?.querySelector('[data-nav="my-list"]') || null;
+        if (mobileNav && !mobileLink) {
+            mobileLink = document.createElement('a');
+            mobileLink.href = '/movies?view=watchlist';
+            mobileLink.className = 'mobile-nav-item';
+            mobileLink.setAttribute('data-nav', 'my-list');
+            mobileLink.innerHTML = `
+                <i class="fas fa-heart" aria-hidden="true"></i>
+                <span>My List</span>
+            `;
+            mobileNav.appendChild(mobileLink);
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const isWatchlist = window.location.pathname.startsWith('/movies') && params.get('view') === 'watchlist';
+        if (link) link.classList.toggle('active', isWatchlist);
+        if (mobileLink) mobileLink.classList.toggle('active', isWatchlist);
+    }
     
 
     setupAuth() {
+        const authEnabled = false;
         const authLink = document.querySelector('.profile-dropdown .dropdown-item .fa-sign-out-alt')?.closest('a');
         const nameEl = document.querySelector('.profile-dropdown .user-info h5');
         const statusEl = document.querySelector('.profile-dropdown .user-info span');
@@ -413,10 +453,37 @@ class HeaderManager {
         const mobileProfileLinks = Array.from(document.querySelectorAll('.mobile-actions .fa-user'))
             .map(icon => icon.closest('a'))
             .filter(Boolean);
+        const dropdownItems = Array.from(document.querySelectorAll('.profile-dropdown .dropdown-item'));
+        const dropdownDividers = Array.from(document.querySelectorAll('.profile-dropdown .dropdown-divider'));
+        const mobileActionItems = Array.from(document.querySelectorAll('.mobile-actions .mobile-action-item'));
+        const dropdown = document.querySelector('.profile-dropdown');
 
         const goAuth = (hash = '') => {
             window.location.href = `/auth${hash}`;
         };
+
+        if (!authEnabled) {
+            if (nameEl) nameEl.textContent = 'Account';
+            if (statusEl) statusEl.textContent = 'Coming soon';
+            if (this.profileBtn) this.profileBtn.setAttribute('title', 'Account features coming soon');
+
+            dropdownItems.forEach((item) => (item.style.display = 'none'));
+            dropdownDividers.forEach((item) => (item.style.display = 'none'));
+            mobileActionItems.forEach((item) => (item.style.display = 'none'));
+
+            if (createAccountBtn) {
+                createAccountBtn.disabled = true;
+                createAccountBtn.setAttribute('title', 'Account features coming soon');
+            }
+
+            if (dropdown && !dropdown.querySelector('.coming-soon-item')) {
+                const comingSoon = document.createElement('div');
+                comingSoon.className = 'dropdown-item coming-soon-item';
+                comingSoon.textContent = 'Account features coming soon';
+                dropdown.appendChild(comingSoon);
+            }
+            return;
+        }
 
         if (createAccountBtn) {
             createAccountBtn.addEventListener('click', () => {

@@ -748,7 +748,17 @@ class Homepage {
         // Platform cards
         document.querySelectorAll('.platform-card').forEach(card => {
             card.addEventListener('click', () => {
-                window.location.href = `/movies?platform=${card.dataset.platform}`;
+                const platform = card.dataset.platform;
+                const url = getPlatformUrl({
+                    platformKey: platform,
+                    title: '',
+                    type: 'movie',
+                    year: null,
+                    region: 'US'
+                });
+                if (url) {
+                    window.open(url, '_blank', 'noopener');
+                }
             });
         });
         

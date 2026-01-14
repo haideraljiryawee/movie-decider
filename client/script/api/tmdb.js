@@ -78,9 +78,10 @@ class TMDbService {
 
     // Search multi (movies + TV)
     async searchMulti(query, page = 1) {
-        return await this.fetchData('/search/multi', { 
-            query, 
-            page
+        return await this.fetchData('/search', {
+            query,
+            page,
+            type: 'multi'
         });
     }
 

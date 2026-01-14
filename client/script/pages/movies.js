@@ -29,6 +29,7 @@ let currentPage = 1;
 let currentView = 'popular';
 let currentFilters = {};
 let isLoading = false;
+const WATCHLIST_KEY = 'streamfinder_watchlist';
 
 document.addEventListener('DOMContentLoaded', async function() {
     initCustomDropdowns();
@@ -581,7 +582,14 @@ async function loadMovies() {
     if (moviesGrid) moviesGrid.innerHTML = '';
     
     isLoading = true;
-    
+
+    if (currentView === 'watchlist') {
+        if (loadingSpinner) loadingSpinner.style.display = 'none';
+        loadWatchlistView();
+        isLoading = false;
+        return;
+    }
+
     try {
         // Get current filter values
         const genreValue = document.getElementById('genre-filter')?.value || 'all';
@@ -614,6 +622,119 @@ async function loadMovies() {
         const loadingSpinner = document.getElementById('loadingSpinner');
         if (loadingSpinner) loadingSpinner.style.display = 'none';
     }
+}
+
+function readWatchlist() {
+    try {
+        const raw = localStorage.getItem(WATCHLIST_KEY);
+        return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function loadWatchlistView() {
+    const moviesGrid = document.getElementById('movies-grid');
+    const pagination = document.getElementById('pagination');
+    const pageTitle = document.querySelector('.page-title');
+    const pageSubtitle = document.querySelector('.page-subtitle');
+    const filterControls = document.querySelectorAll('.filter-select');
+    const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+
+    if (pagination) pagination.style.display = 'none';
+    filterControls.forEach((el) => (el.disabled = true));
+    if (clearFiltersBtn) clearFiltersBtn.disabled = true;
+
+    if (pageTitle) pageTitle.textContent = 'My List';
+    if (pageSubtitle) pageSubtitle.textContent = 'Saved movies and shows you want to watch';
+
+    const list = readWatchlist();
+    if (!moviesGrid) return;
+
+    if (!list.length) {
+        moviesGrid.innerHTML = `
+            <div class="no-results">
+                <i class="fas fa-heart fa-3x"></i>
+                <h3>Your list is empty</h3>
+                <p>Save titles from any details page to see them here.</p>
+                <button class="primary-button" onclick="window.location.href='/movies?view=popular'">
+                    Browse Movies
+                </button>
+            </div>
+        `;
+        return;
+    }
+
+    moviesGrid.innerHTML = '';
+    list.forEach((item) => {
+        const card = createWatchlistCard(item);
+        if (card) moviesGrid.appendChild(card);
+    });
+}
+
+function createWatchlistCard(item) {
+    if (!item || !item.id) return null;
+
+    const card = document.createElement('div');
+    card.className = 'movie-card';
+    card.dataset.id = item.id;
+
+    const typeLabel = item.type === 'tv' ? 'TV Show' : 'Movie';
+    const posterUrl = item.poster || 'https://via.placeholder.com/500x750/2f2f2f/ffffff?text=No+Poster';
+    const rating = item.rating || 'N/A';
+    const year = item.year || 'N/A';
+
+    card.innerHTML = `
+        <div class="movie-card-inner">
+            <div class="movie-poster">
+                <img src="${posterUrl}" 
+                     alt="${item.title || 'Untitled'}" 
+                     loading="lazy"
+                     onerror="this.onerror=null; this.src='https://via.placeholder.com/500x750/2f2f2f/ffffff?text=No+Image'">
+                <div class="movie-overlay">
+                    <button class="view-details-btn">
+                        <i class="fas fa-play-circle"></i> View Details
+                    </button>
+                </div>
+            </div>
+            <div class="movie-info">
+                <h3 class="movie-title">${item.title || 'Untitled'}</h3>
+                <div class="movie-meta">
+                    <span class="movie-year">
+                        <i class="fas fa-calendar-alt"></i> ${year}
+                    </span>
+                    <span class="movie-rating">
+                        <i class="fas fa-star"></i> ${rating}
+                    </span>
+                </div>
+                <div class="movie-genres">
+                    <span class="genre-tag">${typeLabel}</span>
+                </div>
+            </div>
+        </div>
+    `;
+
+    const goDetails = () => {
+        window.location.href = getDetailsUrl({
+            id: item.id,
+            type: item.type,
+            title: item.title,
+            year: item.year
+        });
+    };
+
+    card.querySelector('.view-details-btn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        goDetails();
+    });
+
+    card.addEventListener('click', (e) => {
+        if (!e.target.closest('button')) {
+            goDetails();
+        }
+    });
+
+    return card;
 }
 
 
