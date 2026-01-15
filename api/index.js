@@ -6,7 +6,7 @@ const path = require('path');
 
 const app = express();
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
-const SITEMAP_CACHE_TTL_MS = 1000 * 60 * 60 * 4;
+const SITEMAP_CACHE_TTL_MS = 1000 * 60 * 60 * 6;
 let sitemapCache = { xml: '', expiresAt: 0 };
 
 app.use(cors());
@@ -65,6 +65,17 @@ function buildSitemapXml(urls) {
     ].join('\n');
 }
 
+function buildCoreUrls(baseUrl) {
+    return [
+        { loc: `${baseUrl}/`, changefreq: 'weekly', priority: '1.0' },
+        { loc: `${baseUrl}/movies`, changefreq: 'weekly', priority: '0.8' },
+        { loc: `${baseUrl}/series`, changefreq: 'weekly', priority: '0.8' },
+        { loc: `${baseUrl}/search`, changefreq: 'weekly', priority: '0.6' },
+        { loc: `${baseUrl}/contact`, changefreq: 'monthly', priority: '0.4' },
+        { loc: `${baseUrl}/auth`, changefreq: 'monthly', priority: '0.4' }
+    ];
+}
+
 async function fetchPopular(type, pages = 2) {
     const items = [];
     for (let page = 1; page <= pages; page++) {
@@ -87,54 +98,65 @@ async function fetchPopular(type, pages = 2) {
 
 // Sitemap
 app.get('/sitemap.xml', async (req, res) => {
-    res.set('Content-Type', 'application/xml');
+    res.status(200);
+    res.set('Content-Type', 'application/xml; charset=utf-8');
+    res.set('Cache-Control', 'public, max-age=3600');
 
     if (sitemapCache.expiresAt > Date.now() && sitemapCache.xml) {
         res.send(sitemapCache.xml);
         return;
     }
 
-    const protocol = req.headers['x-forwarded-proto'] || req.protocol;
-    const baseUrl = `${protocol}://${req.get('host')}`;
-    const urls = [
-        { loc: `${baseUrl}/`, changefreq: 'weekly', priority: '1.0' },
-        { loc: `${baseUrl}/movies`, changefreq: 'weekly', priority: '0.8' }
-    ];
+    try {
+        const protocol = req.headers['x-forwarded-proto'] || req.protocol;
+        const baseUrl = `${protocol}://${req.get('host')}`;
+        const urls = buildCoreUrls(baseUrl);
 
-    if (TMDB_API_KEY) {
-        try {
-            const [movies, shows] = await Promise.all([
-                fetchPopular('movie', 2),
-                fetchPopular('tv', 2)
-            ]);
+        if (TMDB_API_KEY) {
+            try {
+                const [movies, shows] = await Promise.all([
+                    fetchPopular('movie', 2),
+                    fetchPopular('tv', 2)
+                ]);
 
-            movies.forEach((item) => {
-                const slug = buildSlug(item.title || item.name, getYearFromDate(item.release_date));
-                if (!slug) return;
-                urls.push({
-                    loc: `${baseUrl}/movie/${slug}`,
-                    changefreq: 'weekly',
-                    priority: '0.8'
+                movies.forEach((item) => {
+                    const slug = buildSlug(item.title || item.name, getYearFromDate(item.release_date));
+                    if (!slug) return;
+                    urls.push({
+                        loc: `${baseUrl}/movie/${slug}`,
+                        changefreq: 'weekly',
+                        priority: '0.8'
+                    });
                 });
-            });
 
-            shows.forEach((item) => {
-                const slug = buildSlug(item.name || item.title, getYearFromDate(item.first_air_date));
-                if (!slug) return;
-                urls.push({
-                    loc: `${baseUrl}/tv/${slug}`,
-                    changefreq: 'weekly',
-                    priority: '0.8'
+                shows.forEach((item) => {
+                    const slug = buildSlug(item.name || item.title, getYearFromDate(item.first_air_date));
+                    if (!slug) return;
+                    urls.push({
+                        loc: `${baseUrl}/tv/${slug}`,
+                        changefreq: 'weekly',
+                        priority: '0.8'
+                    });
                 });
-            });
-        } catch (error) {
-            // Fall back to core URLs only
+            } catch (error) {
+                // Keep core URLs when TMDB fetch fails.
+            }
         }
-    }
 
-    const xml = buildSitemapXml(urls);
-    sitemapCache = { xml, expiresAt: Date.now() + SITEMAP_CACHE_TTL_MS };
-    res.send(xml);
+        const xml = buildSitemapXml(urls);
+        sitemapCache = { xml, expiresAt: Date.now() + SITEMAP_CACHE_TTL_MS };
+        res.send(xml);
+    } catch (error) {
+        if (sitemapCache.xml) {
+            res.send(sitemapCache.xml);
+            return;
+        }
+        const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'https';
+        const host = req.get('host') || 'movie-decider-lime.vercel.app';
+        const baseUrl = `${protocol}://${host}`;
+        const fallbackXml = buildSitemapXml(buildCoreUrls(baseUrl));
+        res.send(fallbackXml);
+    }
 });
 
 // Analytics tracking
