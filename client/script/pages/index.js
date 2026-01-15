@@ -38,7 +38,20 @@ function getTopTasteKey(map) {
     return bestKey;
 }
 
+function isDebugAnalyticsEnabled() {
+    try {
+        if (localStorage.getItem('debug_analytics') === '1') return true;
+    } catch (e) {}
+    try {
+        return new URLSearchParams(window.location.search).get('debug') === '1';
+    } catch (e) {}
+    return false;
+}
+
 function track(event, meta = {}) {
+    if (isDebugAnalyticsEnabled()) {
+        console.log('[analytics]', event, meta);
+    }
     fetch('/api/track', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -88,8 +101,10 @@ class Homepage {
         this.decideUI = {
             bound: false,
             isOpen: false,
-            lastToggle: 0
+            lastToggle: 0,
+            isRunning: false
         };
+        this.sliderInteractionsBound = false;
     }
     
     async init() {
@@ -248,6 +263,8 @@ class Homepage {
     }
     
     setupSliderInteractions() {
+        if (this.sliderInteractionsBound) return;
+        this.sliderInteractionsBound = true;
         document.addEventListener('click', (e) => {
             const slideBtn = e.target.closest('.slide-btn');
             if (!slideBtn) return;
@@ -1013,6 +1030,8 @@ class Homepage {
     }
 
     async runDecideSearch() {
+        if (this.decideUI?.isRunning) return;
+        this.decideUI.isRunning = true;
         this.showDecideStep(4);
         const loading = document.getElementById('decideLoading');
         const resultsEl = document.getElementById('decideResults');
@@ -1042,6 +1061,7 @@ class Homepage {
             }
         } finally {
             if (loading) loading.hidden = true;
+            if (this.decideUI) this.decideUI.isRunning = false;
         }
     }
 

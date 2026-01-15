@@ -138,6 +138,25 @@ app.get('/sitemap.xml', async (req, res) => {
 });
 
 // Analytics tracking
+app.get('/api/track/status', (req, res) => {
+    const logPath = path.join(process.cwd(), 'analytics.log');
+    fs.readFile(logPath, 'utf8', (err, data) => {
+        if (err) {
+            if (err.code === 'ENOENT') {
+                return res.json({ ok: true, lines: 0 });
+            }
+            return res.status(500).json({ ok: false });
+        }
+        const trimmed = data.trim();
+        const lines = trimmed ? trimmed.split('\n').length : 0;
+        const tail = Number(req.query.tail);
+        if (Number.isFinite(tail) && tail > 0) {
+            return res.json({ ok: true, lines, tail: Math.min(lines, tail) });
+        }
+        return res.json({ ok: true, lines });
+    });
+});
+
 app.post('/api/track', (req, res) => {
     const { event, meta = {}, ts } = req.body || {};
     if (!event) {

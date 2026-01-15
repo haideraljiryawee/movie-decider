@@ -3,7 +3,20 @@
 import { getPlatformUrl } from '../core/platformRouter.js';
 import { getTaste, updateTaste, bumpGenre } from '../core/taste.js';
 
+function isDebugAnalyticsEnabled() {
+    try {
+        if (localStorage.getItem('debug_analytics') === '1') return true;
+    } catch (e) {}
+    try {
+        return new URLSearchParams(window.location.search).get('debug') === '1';
+    } catch (e) {}
+    return false;
+}
+
 function track(event, meta = {}) {
+    if (isDebugAnalyticsEnabled()) {
+        console.log('[analytics]', event, meta);
+    }
     fetch('/api/track', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -16,6 +29,9 @@ function track(event, meta = {}) {
 }
 
 const WATCHLIST_KEY = 'streamfinder_watchlist';
+let detailsListenersBound = false;
+let isDetailsLoading = false;
+let currentDetailsKey = null;
 
 function readWatchlist() {
     try {
@@ -141,6 +157,10 @@ async function initDetailsPage() {
 }
 
 async function loadContentDetails(id, type, options = {}) {
+    const loadKey = `${type}:${id}`;
+    if (isDetailsLoading && currentDetailsKey === loadKey) return;
+    isDetailsLoading = true;
+    currentDetailsKey = loadKey;
     try {
         console.log(`🔄 Fetching ${type} details for ID: ${id}`);
         
@@ -180,10 +200,12 @@ async function loadContentDetails(id, type, options = {}) {
         // Show main content
         showLoading(false);
         document.getElementById('mainContent').style.display = 'block';
+        isDetailsLoading = false;
         
     } catch (error) {
         console.error('❌ Error loading content details:', error);
         showError(error.message || 'Failed to load content details');
+        isDetailsLoading = false;
     }
 }
 
@@ -866,6 +888,8 @@ function loadStreamingOptions(content, type) {
 }
 
 function setupEventListeners() {
+    if (detailsListenersBound) return;
+    detailsListenersBound = true;
     // Share button
     const shareBtn = document.querySelector('.share-btn');
     if (shareBtn) {
